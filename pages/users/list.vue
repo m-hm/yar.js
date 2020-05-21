@@ -5,20 +5,20 @@
         <tr>
           <th>نام</th>
           <th>نام خانوادگی</th>
-          <th>نام کاربری</th>
-          <th>ایمیل</th>
-          <th>نقش‌ها</th>
+          <th>موبایل</th>
           <th>فعال</th>
+          <th>نقش‌ها</th>
+          <th>‌تاریخ ایجاد</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="u in users" :key="u.id">
-          <td>{{ u.firstName }}</td>
-          <td>{{ u.lastName }}</td>
-          <td>{{ u.username }}</td>
-          <td>{{ u.email }}</td>
+          <td>{{ u.first_name }}</td>
+          <td>{{ u.last_name }}</td>
+          <td>{{ u.mobile }}</td>
+          <td>{{ u.is_active }}</td>
           <td>{{ u.roles }}</td>
-          <td>{{ u.isEnable }}</td>
+          <td>{{ u.created_at }}</td>
         </tr>
       </tbody>
     </template>
@@ -28,9 +28,9 @@
 <script>
 export default {
   async asyncData ({ $axios }) {
-    const users = await $axios.$get('/api/users')
+    const result = await $axios.$get('/api/users')
     return {
-      users
+      users: result.data
     }
   }
 
