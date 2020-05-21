@@ -1,12 +1,13 @@
 <template>
   <v-layout column justify-center align-center>
-    سلام
-    120-۱۲۰
+    logout page
   </v-layout>
 </template>
 
 <script>
 export default {
-  components: { }
+  mounted () {
+    this.$auth.logout()
+  }
 }
 </script>

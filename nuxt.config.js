@@ -43,6 +43,8 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth'
   ],
   /*
   ** vuetify module configuration
@@ -50,8 +52,9 @@ export default {
   */
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    rtl: true,
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -74,5 +77,31 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  /*
+  **
+  */
+  router: {
+    middleware: ['auth']
+  },
+  /*
+  **
+  */
+  auth: {
+    cookie: true,
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/users/login', method: 'post', propertyName: 'token' },
+          user: { url: '/api/users/0', method: 'get', propertyName: '' }
+        }
+      }
+    }
+  },
+  /*
+  **
+  */
+  axios: {
+    baseURL: 'http://127.0.0.1:8000'
   }
 }
