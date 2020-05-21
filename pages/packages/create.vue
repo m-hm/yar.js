@@ -53,17 +53,17 @@
             <template v-slot:activator="{ on }">
               <v-text-field
                 v-model="localForm.expirationDateFarsi"
-                v-on="on"
                 label="تاریخ اعتبار"
                 readonly
+                v-on="on"
               />
             </template>
             <v-date-picker
               v-model="form.expirationDate"
-              @input="expirationDateMenu = false"
               :first-day-of-week="6"
-              @change="onExpirationDate"
               locale="fa-ir"
+              @input="expirationDateMenu = false"
+              @change="onExpirationDate"
             />
           </v-menu>
         </v-col>
@@ -103,7 +103,7 @@
 
       <v-row>
         <v-col cols="12" md="4">
-          <v-btn @click="submit" color="primary">
+          <v-btn color="primary" @click="submit">
             ثبت
           </v-btn>
         </v-col>
