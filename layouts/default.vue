@@ -10,7 +10,7 @@
 
       <v-spacer />
 
-      <span>{{ $auth.user.firstName + ' ' + $auth.user.lastName }}</span>
+      <span>{{ $auth.user.first_name + ' ' + $auth.user.last_name }}</span>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
