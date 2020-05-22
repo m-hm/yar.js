@@ -19,7 +19,6 @@
               ویرایش
             </nuxt-link>
           </td>
-          <td />
         </tr>
       </tbody>
     </template>

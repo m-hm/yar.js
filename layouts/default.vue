@@ -30,7 +30,7 @@
           {{ e }}
         </v-alert>
       </v-container>
-      <v-container class="fill-height" fluid>
+      <v-container fluid>
         <nuxt />
       </v-container>
     </v-content>
