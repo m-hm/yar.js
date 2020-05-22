@@ -2,102 +2,14 @@
   <v-form ref="form" v-model="valid" lazy-validation>
     <v-container>
       <v-row>
-        <v-col cols="12" md="4">
-          <v-select
-            v-model="form.symbolName"
-            :items="items.symbols"
-            :rules="rule.select"
-            label="نماد"
-            required
-          />
-        </v-col>
-
-        <v-col cols="12" md="4">
-          <v-select
-            v-model="form.actionType"
-            :items="items.actionTypes"
-            :rules="rule.select"
-            label="اکشن"
-            required
-          />
-        </v-col>
-
-        <v-col cols="12" md="4">
-          <v-select
-            v-model="form.signalType"
-            :items="items.signalTypes"
-            :rules="rule.select"
-            label="سیگنال"
-          />
+        <v-col cols="12" md="12">
+          <v-text-field v-model="form.name" :rules="rule.name" label="نام بسته" required />
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="12" md="3">
-          <v-checkbox v-model="form.isActive" label="فعال" />
-        </v-col>
-
-        <v-col cols="12" md="3">
-          <v-checkbox v-model="form.isIpo" label="عرض اولیه" />
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-menu
-            v-model="expirationDateMenu"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                v-model="localForm.expirationDateFarsi"
-                label="تاریخ اعتبار"
-                readonly
-                v-on="on"
-              />
-            </template>
-            <v-date-picker
-              v-model="form.expirationDate"
-              :first-day-of-week="6"
-              locale="fa-ir"
-              @input="expirationDateMenu = false"
-              @change="onExpirationDate"
-            />
-          </v-menu>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-slider
-            v-model="form.riskValue"
-            label="ریسک"
-            min="1"
-            max="10"
-            color="orange"
-            thumb-label
-            ticks
-            required
-          />
-        </v-col>
-
-        <v-col cols="12" md="6">
-          <v-slider
-            v-model="form.importanceLevel"
-            label="اهمیت"
-            min="1"
-            max="10"
-            color="green"
-            thumb-label
-            ticks
-          />
-        </v-col>
-      </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field v-model="form.expertNote" :rules="rule.note" label="توضیحات" required />
+          <v-text-field v-model="form.description" :rules="rule.name" label="توضیحات" required />
         </v-col>
       </v-row>
 
@@ -115,68 +27,32 @@
 <script>
 export default {
   async asyncData ({ $axios, params }) {
-    const signal = await $axios.$get(`/api/signals/${params.id}`)
-    const d = new Date(signal.expirationDate)
-    signal.expirationDate = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+    const result = await $axios.$get(`/api/packages/${params.id}`)
     return {
-      form: signal
+      form: result.data
     }
   },
   data () {
     return {
       valid: false,
-      items: {
-        symbols: ['A', 'B'],
-        signalTypes: ['Stocks', 'Fund', 'Securities', 'IPO'],
-        actionTypes: ['Buy', 'Sell', 'Issuance', 'Revoke']
-      },
-      form: {
-        symbolName: '',
-        signalType: '',
-        importanceLevel: 1,
-        expirationDate: '',
-        actionType: '',
-        expertNote: '',
-        isActive: false,
-        riskValue: 1,
-        isIpo: false
-      },
-      localForm: { expirationDateFarsi: '' },
-      expirationDateMenu: false,
       rule: {
-        note: [
+        name: [
           v => !!v || 'این فیلد اجباری است',
           v => (v && v.trim().length > 3) || 'این فیلد اجباری است'
-        ],
-        select: [
-          v => !!v || 'این فیلد اجباری است',
-          v => (v && v.toString().trim().length > 0) || 'این فیلد اجباری است'
         ]
       }
     }
   },
-  mounted () {
-    const d = new Date(this.form.expirationDate)
-    this.localForm.expirationDateFarsi = this.dateFormat(d)
-  },
   methods: {
-    dateFormat (date) {
-      return new Intl.DateTimeFormat('fa-IR').format(date)
-    },
     async submit () {
       if (!this.$refs.form.validate()) {
         return
       }
       try {
-        const result = await this.$axios.$put(`/api/signals/${this.$route.params.id}`, this.form)
-        alert(result.id)
+        await this.$axios.$put(`/api/packages/${this.form.id}`, this.form)
+        alert('بسته ویرایش شد')
       } catch (e) {
-        alert(e.message)
       }
-    },
-    onExpirationDate () {
-      const date = new Date(this.form.expirationDate)
-      this.localForm.expirationDateFarsi = this.dateFormat(date)
     }
   }
 }

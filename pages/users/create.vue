@@ -76,7 +76,6 @@ export default {
   }),
   methods: {
     async submit () {
-      this.hasError = false
       if (!this.$refs.form.validate()) {
         return
       }

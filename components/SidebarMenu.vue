@@ -52,10 +52,18 @@ export default {
         },
         {
           icon: 'mdi-signal-variant',
-          title: 'سیگنال',
+          title: 'بسته ها',
           items: [
-            { title: 'لیست', link: '/signals/list', icon: 'mdi-view-list' },
-            { title: 'افزودن', link: '/signals/create', icon: 'mdi-plus' }
+            { title: 'لیست', link: '/packages/list', icon: 'mdi-view-list' },
+            { title: 'افزودن', link: '/packages/create', icon: 'mdi-plus' }
+          ]
+        },
+        {
+          icon: 'mdi-signal-variant',
+          title: 'افراد',
+          items: [
+            { title: 'لیست', link: '/people/list', icon: 'mdi-view-list' },
+            { title: 'افزودن', link: '/people/create', icon: 'mdi-plus' }
           ]
         }
       ]

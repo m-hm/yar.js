@@ -4,6 +4,7 @@ export default function ({ $axios, store, redirect }) {
   })
 
   $axios.onError((error) => {
+    store.commit('alerts/clear')
     const code = parseInt(error.response && error.response.status)
     if (code === 422) {
       const errs = error.response.data.errors

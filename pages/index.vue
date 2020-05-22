@@ -1,8 +1,5 @@
 <template>
-  <v-layout column justify-center align-center>
-    سلام
-    120-۱۲۰
-  </v-layout>
+  <v-layout column justify-center align-center />
 </template>
 
 <script>

@@ -18,7 +18,7 @@
           <td>{{ u.mobile }}</td>
           <td>{{ u.is_active }}</td>
           <td>{{ u.roles }}</td>
-          <td>{{ u.created_at }}</td>
+          <td>{{ dateFormat(u.created_at) }}</td>
         </tr>
       </tbody>
     </template>
@@ -26,14 +26,20 @@
 </template>
 
 <script>
+const DateFormat = Intl.DateTimeFormat('fa-IR').format
+
 export default {
   async asyncData ({ $axios }) {
     const result = await $axios.$get('/api/users')
     return {
       users: result.data
     }
+  },
+  methods: {
+    dateFormat (date) {
+      return DateFormat(new Date(date))
+    }
   }
-
 }
 </script>
 

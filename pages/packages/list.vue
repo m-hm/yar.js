@@ -4,30 +4,18 @@
       <thead>
         <tr>
           <th>نماد</th>
-          <th>اکشن</th>
-          <th>سیگنال</th>
-          <th>فعال</th>
-          <th>عرض اولیه</th>
-          <th>اهمیت</th>
-          <th>ریسک</th>
-          <th>تاریخ اعتبار</th>
+          <th>توضیحات</th>
           <th>تاریخ ایجاد</th>
           <th>عملیات</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="s in signals.content" :key="s.id">
-          <td>{{ s.symbolName }}</td>
-          <td>{{ s.actionType }}</td>
-          <td>{{ s.signalType }}</td>
-          <td>{{ s.isActive }}</td>
-          <td>{{ s.isIpo }}</td>
-          <td>{{ s.importanceLevel }}</td>
-          <td>{{ s.riskValue }}</td>
-          <td>{{ dateFormat(s.expirationDate) }}</td>
-          <td>{{ dateFormat(s.createdAt) }}</td>
+        <tr v-for="p in packages" :key="p.id">
+          <td>{{ p.name }}</td>
+          <td>{{ p.description }}</td>
+          <td>{{ dateFormat(p.created_at) }}</td>
           <td>
-            <nuxt-link :to="`/signals/${s.id}/edit`">
+            <nuxt-link :to="`/packages/${p.id}/edit`">
               ویرایش
             </nuxt-link>
           </td>
@@ -39,16 +27,18 @@
 </template>
 
 <script>
+const DateFormat = Intl.DateTimeFormat('fa-IR').format
+
 export default {
   async asyncData ({ $axios }) {
-    const signals = await $axios.$get('/api/signals')
+    const result = await $axios.$get('/api/packages')
     return {
-      signals
+      packages: result.data
     }
   },
   methods: {
     dateFormat (date) {
-      return new Intl.DateTimeFormat('fa-IR').format(new Date(date))
+      return DateFormat(new Date(date))
     }
   }
 }
