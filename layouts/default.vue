@@ -25,6 +25,11 @@
     </v-app-bar>
 
     <v-content>
+      <v-container>
+        <v-alert v-for="(e, i) in errors" :key="i" type="error">
+          {{ e }}
+        </v-alert>
+      </v-container>
       <v-container class="fill-height" fluid>
         <nuxt />
       </v-container>
@@ -47,6 +52,11 @@ export default {
   data: () => ({
     drawer: null
   }),
+  computed: {
+    errors () {
+      return this.$store.state.alerts.map.error
+    }
+  },
   methods: {
     logout () {
       this.$router.push('/logout')

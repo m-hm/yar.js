@@ -1,8 +1,5 @@
 <template>
   <div>
-    <v-alert v-if="hasError" type="error">
-      {{ error }}
-    </v-alert>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-container>
         <v-row>
@@ -65,19 +62,17 @@ export default {
     items: {
       roles: ['distributor', 'operator', 'admin']
     },
-    form: { is_active: true },
+    form: { is_active: true, roles: ['distributor'] },
     rule: {
       name: [
         v => !!v || 'Name is required',
-        v => (v && v.length > 3) || 'min length > 3'
+        v => (v && v.length >= 3) || 'min length >= 3'
       ],
       mobile: [
         v => !!v || 'Mobile is required',
         v => (v && /^09[0-9]{9}$/.test(v)) || 'Invalid mobile number'
       ]
-    },
-    hasError: false,
-    error: null
+    }
   }),
   methods: {
     async submit () {
@@ -86,12 +81,9 @@ export default {
         return
       }
       try {
-        const result = await this.$axios.$post('/api/users', this.form)
-        alert(result.id)
-      } catch (e) {
-        this.hasError = true
-        this.error = JSON.stringify(e)
-      }
+        await this.$axios.$post('/api/users', this.form)
+        alert('کاربر اضافه شد')
+      } catch (e) {}
     }
   }
 }
