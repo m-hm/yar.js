@@ -2,20 +2,17 @@
   <div>
     <div>
       <v-form>
-        <v-container>
+        <v-container fluid>
           <v-row>
             <v-col cols="12" md="1">
               <v-text-field v-model="search.priority" type="number" label="اولویت" />
             </v-col>
-
             <v-col cols="12" md="2">
               <v-text-field v-model="search.first_name" label="نام" />
             </v-col>
-
             <v-col cols="12" md="2">
               <v-text-field v-model="search.last_name" label="نام‌خانوادگی" />
             </v-col>
-
             <v-col cols="12" md="2">
               <v-text-field
                 v-model="search.national_code"
@@ -23,8 +20,15 @@
                 dir="ltr"
               />
             </v-col>
+            <v-col cols="12" md="3">
+              <v-select
+                v-model="search.package"
+                :items="items.packages"
+                label="بسته"
+              />
+            </v-col>
             <v-col cols="12" md="2">
-              <v-btn text @click="onSearch">
+              <v-btn @click="onSearch">
                 جستوجو
               </v-btn>
             </v-col>
@@ -37,7 +41,7 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th><v-checkbox label="همه" @click="selectAll" /></th>
+            <th><v-checkbox v-model="form.selectedAll" label="همه" @click="onSelectAll" /></th>
             <th>نام</th>
             <th>نام خانوادگی</th>
             <th>کدملی</th>
@@ -79,7 +83,37 @@
         </tbody>
       </template>
     </v-simple-table>
-    {{ form.ids }}
+
+    <div>
+      <v-container fluid>
+        <v-row align="center">
+          <v-col cols="12" sm="4">
+            اختصاص دادن به بسته‌ی
+            <v-select
+              v-model="form.package"
+              :items="items.packages"
+              label="بسته"
+            />
+          </v-col>
+          <v-col cols="12" sm="4">
+            تغییر اولویت به
+            <v-text-field v-model="form.priority" type="number" label="اولویت" />
+          </v-col>
+          <v-col cols="12" sm="4">
+            توزیع کننده
+            <v-select
+              v-model="form.distributor"
+              :items="items.users"
+            />
+          </v-col>
+        </v-row>
+        <v-row align="center">
+          <v-btn color="primary" @click="onSubmit">
+            اعمال
+          </v-btn>
+        </v-row>
+      </v-container>
+    </div>
   </div>
 </template>
 
@@ -88,16 +122,28 @@ const DateFormat = Intl.DateTimeFormat('fa-IR').format
 
 export default {
   async asyncData ({ $axios }) {
-    const result = await $axios.$get('/api/people')
+    const people = (await $axios.$get('/api/people')).data
+    const packages = (await $axios.$get('/api/packages')).data
+    const users = (await $axios.$get('/api/users')).data
     return {
-      people: result.data
+      people,
+      packages,
+      users
     }
   },
   data () {
     return {
       search: { },
-      form: { ids: [] }
+      form: { ids: [], selectedAll: false },
+      items: {
+        packages: [],
+        users: []
+      }
     }
+  },
+  mounted () {
+    this.items.packages = this.packages.map(x => ({ text: x.name, value: x.id }))
+    this.items.users = this.users.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
   },
   methods: {
     dateFormat (date) {
@@ -117,9 +163,16 @@ export default {
         this.people = result.data
       } catch (e) {}
     },
-    
-    selectAll(){
-    this.form.ids = this.people.map(x => x.id)
+    async onSubmit () {
+      try {
+        await this.$axios.$post('/api/people/package', this.form)
+        await this.onSearch()
+        this.form.selectedAll = false
+        this.form.ids = []
+      } catch (e) {}
+    },
+    onSelectAll () {
+      this.form.ids = this.form.selectedAll ? this.people.map(x => x.id) : []
     }
   }
 }
