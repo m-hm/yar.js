@@ -37,6 +37,7 @@
       <template v-slot:default>
         <thead>
           <tr>
+            <th><v-checkbox label="همه" @click="selectAll" /></th>
             <th>نام</th>
             <th>نام خانوادگی</th>
             <th>کدملی</th>
@@ -55,6 +56,7 @@
         </thead>
         <tbody>
           <tr v-for="p in people" :key="p.id">
+            <td><v-checkbox v-model="form.ids" :value="p.id" /></td>
             <td>{{ p.first_name }}</td>
             <td>{{ p.last_name }}</td>
             <td>{{ p.national_code }}</td>
@@ -77,6 +79,7 @@
         </tbody>
       </template>
     </v-simple-table>
+    {{ form.ids }}
   </div>
 </template>
 
@@ -92,12 +95,8 @@ export default {
   },
   data () {
     return {
-      search: {
-        priority: '',
-        first_name: '',
-        last_name: '',
-        national_code: ''
-      }
+      search: { },
+      form: { ids: [] }
     }
   },
   methods: {
@@ -115,10 +114,12 @@ export default {
       }
       try {
         const result = await this.$axios.$get('/api/people', { params: data })
-        return {
-          people: result.data
-        }
+        this.people = result.data
       } catch (e) {}
+    },
+    
+    selectAll(){
+    this.form.ids = this.people.map(x => x.id)
     }
   }
 }
