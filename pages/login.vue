@@ -31,8 +31,8 @@ export default {
   data () {
     return {
       form: {
-        mobile: '09029044499',
-        password: '123456'
+        mobile: '',
+        password: ''
       },
       error: ''
     }

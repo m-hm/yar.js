@@ -1,7 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  mode: 'universal',
+  mode: 'spa',
   /*
   ** Headers of the page
   */
@@ -104,6 +104,6 @@ export default {
   **
   */
   axios: {
-    baseURL: 'http://127.0.0.1:8000'
+    baseURL: 'http://127.0.0.2:8000'  // 'http://yar1.ir/backend'
   }
 }
