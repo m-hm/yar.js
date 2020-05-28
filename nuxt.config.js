@@ -14,7 +14,8 @@ export default {
       { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', type: 'text/css', href: 'https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v4.0.5/dist/font-face.css' }
     ]
   },
   /*
@@ -25,6 +26,7 @@ export default {
   ** Global CSS
   */
   css: [
+    '~/static/css/style.css'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -104,6 +106,6 @@ export default {
   **
   */
   axios: {
-    baseURL: 'http://127.0.0.2:8000'  // 'http://yar1.ir/backend'
+    baseURL: 'http://127.0.0.1:8000' // 'http://yar1.ir/backend'
   }
 }

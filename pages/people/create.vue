@@ -3,89 +3,127 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-container>
         <v-row>
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.first_name" :rules="rule.name" label="نام" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.first_name" :rules="rule.name" label="نام" />
           </v-col>
 
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.last_name" :rules="rule.name" label="نام‌خانوادگی" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.last_name" :rules="rule.name" label="نام‌خانوادگی" />
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="2">
             <v-text-field
               v-model="form.national_code"
               :rules="rule.nationalCode"
               label="کدملی"
               dir="ltr"
-              required
             />
           </v-col>
-        </v-row>
 
-        <v-row>
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.father_name" label="نام پدر" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.father_name" label="نام پدر" />
           </v-col>
 
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.whife_name" label="نام‌ همسر" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.whife_name" label="نام‌ همسر" />
           </v-col>
 
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="2">
             <v-text-field
               v-model="form.wife_national_code"
               :rules="rule.nationalCode"
               label="کدملی همسر"
               dir="ltr"
-              required
             />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="2">
             <v-switch v-model="form.is_supervisor" label="سرپرست" />
           </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.priority" type="number" label="اولویت" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.priority" type="number" label="اولویت" />
           </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.children_count" type="number" label="تعداد فرزندان" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.children_count" type="number" label="تعداد فرزندان" />
           </v-col>
-        </v-row>
 
-        <v-row>
-          <v-col cols="12" md="4">
-            <v-text-field v-model="form.income" type="number" label="درآمد" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.income" type="number" label="درآمد" />
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="2">
             <v-text-field
               v-model="form.mobile"
               label="موبایل ها"
               dir="ltr"
               hint="با / از هم جدا کنید"
-              required
             />
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="2">
             <v-text-field
               v-model="form.phones"
               label="تلفن ها"
               dir="ltr"
-              required
             />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col cols="12" md="12">
-            <v-text-field v-model="form.address" label="آدرس" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.introducer" label="معرف" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.researches" type="number" label="تحقیقات" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.suspicious" type="number" label="مشکوک" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.pension" label="مستمری" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.job" label="شغل" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.illness" label="بیماری" />
           </v-col>
         </v-row>
 
         <v-row>
-          <v-col cols="12" md="12">
-            <v-text-field v-model="form.description" label="توضیحات" required />
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.location" label="مکان" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-select
+              v-model="form.path_id"
+              :items="items.paths"
+              label="مسیر"
+            />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.housing_status" type="number" label="وضعیت مسکن" />
+          </v-col>
+
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.physical_status" label="وضعیت جسمی" />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.address" label="آدرس" />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field v-model="form.description" label="توضیحات" />
           </v-col>
         </v-row>
 
@@ -115,15 +153,21 @@ function isNationalCode (v) {
   return (v[9] | 0) === rem
 }
 export default {
+  async asyncData ({ $axios }) {
+    const paths = (await $axios.$get('/api/paths')).data
+    return {
+      paths
+    }
+  },
   data: () => ({
     valid: false,
     items: {
-      roles: ['distributor', 'operator', 'admin']
+      paths: []
     },
     form: { },
     rule: {
       name: [
-        v => !!v || 'Name is required',
+        v => !!v || 'این فیلد اجباری است',
         v => (v && v.length >= 3) || 'min length >= 3'
       ],
       nationalCode: [
@@ -131,6 +175,9 @@ export default {
       ]
     }
   }),
+  mounted () {
+    this.items.paths = this.paths.map(x => ({ text: x.name, value: x.id }))
+  },
   methods: {
     async submit () {
       if (!this.$refs.form.validate()) {

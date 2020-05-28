@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app>
     <v-navigation-drawer v-model="drawer" app clipped right>
       <sidebar-menu />
     </v-navigation-drawer>
@@ -64,3 +64,9 @@ export default {
   }
 }
 </script>
+
+<style>
+body {
+  font-family: Samim;
+}
+</style>

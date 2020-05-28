@@ -51,7 +51,7 @@ export default {
           ]
         },
         {
-          icon: 'mdi-signal-variant',
+          icon: 'mdi-package-variant',
           title: 'بسته ها',
           items: [
             { title: 'لیست', link: '/packages/list', icon: 'mdi-view-list' },
@@ -59,11 +59,20 @@ export default {
           ]
         },
         {
-          icon: 'mdi-signal-variant',
+          icon: 'mdi-map-marker-path',
+          title: 'مسیرها',
+          items: [
+            { title: 'لیست', link: '/paths/list', icon: 'mdi-view-list' },
+            { title: 'افزودن', link: '/paths/create', icon: 'mdi-plus' }
+          ]
+        },
+        {
+          icon: 'mdi-account-group',
           title: 'افراد',
           items: [
             { title: 'لیست', link: '/people/list', icon: 'mdi-view-list' },
-            { title: 'افزودن', link: '/people/create', icon: 'mdi-plus' }
+            { title: 'افزودن', link: '/people/create', icon: 'mdi-plus' },
+            { title: 'اکسل', link: '/people/import', icon: 'mdi-file-excel-outline' }
           ]
         }
       ]
