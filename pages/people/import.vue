@@ -3,7 +3,7 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="12">
-          <v-file-input accept="image/*" label="فایل اکسل" />
+          <v-file-input v-model="form.file" :rules="rule.file" accept=".xlsx" label="فایل اکسل" show-size />
         </v-col>
       </v-row>
 
@@ -26,23 +26,27 @@ export default {
       items: { },
       form: { },
       rule: {
-        name: [
-          v => !!v || 'این فیلد اجباری است',
-          v => (v && v.trim().length > 3) || 'این فیلد اجباری است'
+        file: [
+          v => !!v || 'این فیلد اجباری است'
         ]
       }
     }
   },
   methods: {
-    async submit () {
+    async  submit () {
       if (!this.$refs.form.validate()) {
         return
       }
+
+      const formData = new FormData()
+      formData.append('file', this.form.file)
+
       try {
-        await this.$axios.$post('/api/people/import', this.form)
+        await this.$axios.$post('/api/people/import', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
         alert('بسته اضافه شد')
-      } catch (e) {
-      }
+      } catch (e) { }
     }
   }
 }
