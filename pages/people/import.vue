@@ -12,6 +12,11 @@
           <v-btn color="primary" @click="submit">
             ارسال
           </v-btn>
+          <v-progress-circular
+            v-if="uploading"
+            indeterminate
+            color="green"
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -23,6 +28,7 @@ export default {
   data () {
     return {
       valid: false,
+      uploading: false,
       items: { },
       form: { },
       rule: {
@@ -37,16 +43,19 @@ export default {
       if (!this.$refs.form.validate()) {
         return
       }
+      if (this.uploading) { return }
 
+      this.uploading = true
       const formData = new FormData()
       formData.append('file', this.form.file)
 
       try {
-        await this.$axios.$post('/api/people/import', formData, {
+        const r = await this.$axios.$post('/api/people/import', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
-        alert('بسته اضافه شد')
+        alert(`${r.success} سطر اضافه شد\n${r.faild} سطر ناموفق\nشماره سطرهای ناموفق: (${r.rows.join(',')})`)
       } catch (e) { }
+      this.uploading = false
     }
   }
 }
