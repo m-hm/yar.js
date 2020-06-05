@@ -47,6 +47,7 @@
             <th>کدملی</th>
             <th>پدر</th>
             <th>اولویت</th>
+            <th>مسیر</th>
             <th>سرپرست</th>
             <th>درآمد</th>
             <th>فرزندان</th>
@@ -66,6 +67,7 @@
             <td>{{ p.national_code }}</td>
             <td>{{ p.father_name }}</td>
             <td>{{ p.priority }}</td>
+            <td>{{ p.path_id }}</td>
             <td>{{ p.is_supervisor }}</td>
             <td>{{ p.income }}</td>
             <td>{{ p.children_count }}</td>
@@ -157,13 +159,15 @@ export default {
         packages: [],
         paths: [],
         users: []
-      }
+      },
+      pathsKeyValue: new Map(),
     }
   },
   mounted () {
     this.items.packages = this.packages.data.map(x => ({ text: x.name, value: x.id }))
     this.items.paths = this.paths.data.map(x => ({ text: x.name, value: x.id }))
     this.items.users = this.users.data.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
+    _.forEach(this.items.paths, (v,k)=>  this.pathsKeyValue.set(k, v));
   },
   methods: {
     fmtDate (v) {
@@ -186,6 +190,9 @@ export default {
     },
     onSelectAll () {
       this.form.ids = this.form.selectedAll ? _.map(this.people.data, x => x.id) : []
+    },
+    pathIdToText(id) {
+      return
     }
   }
 }
