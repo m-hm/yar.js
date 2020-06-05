@@ -47,33 +47,37 @@
             <th>کدملی</th>
             <th>پدر</th>
             <th>اولویت</th>
-            <th>مسیر</th>
             <th>سرپرست</th>
             <th>درآمد</th>
+            <th>بسته دریافتی</th>
             <th>فرزندان</th>
-            <th>موبایل</th>
             <th>تلفن</th>
             <th>ایجاد</th>
+            <th>مسیر</th>
             <th>آدرس</th>
             <th>توضیحات</th>
             <th />
           </tr>
         </thead>
         <tbody>
-          <tr v-for="p in people.data" :key="p.id">
+          <tr v-for="p in people.data" :key="p.id" :class="(p.national_code_conflicts && p.national_code_conflicts.length) ? 'red--text' : ''">
             <td><v-checkbox v-model="form.ids" :value="p.id" /></td>
             <td>{{ p.first_name }}</td>
             <td>{{ p.last_name }}</td>
             <td>{{ p.national_code }}</td>
             <td>{{ p.father_name }}</td>
             <td>{{ p.priority }}</td>
-            <td>{{ p.path_id }}</td>
             <td>{{ p.is_supervisor }}</td>
             <td>{{ p.income }}</td>
+            <td>
+              <v-btn small color="gary" @click="onShowPackages(p)">
+                {{ p.packages_count }}
+              </v-btn>
+            </td>
             <td>{{ p.children_count }}</td>
-            <td>{{ p.mobiles }}</td>
             <td>{{ p.phones }}</td>
             <td>{{ fmtDate(p.created_at) }}</td>
+            <td>{{ pathsKeyValue.get(p.path_id) }}</td>
             <td>{{ p.address }}</td>
             <td>{{ p.description }}</td>
             <td>
@@ -112,11 +116,11 @@
               label="بسته"
             />
           </v-col>
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="2">
             تغییر اولویت به
             <v-text-field v-model="form.priority" type="number" label="اولویت" />
           </v-col>
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="2">
             توزیع کننده
             <v-select
               v-model="form.distributor"
@@ -125,12 +129,38 @@
           </v-col>
         </v-row>
         <v-row align="center">
-          <v-btn color="primary" @click="onSubmit">
+          <v-btn color="primary" @click="onAddPackage">
             اعمال
           </v-btn>
         </v-row>
       </v-container>
     </div>
+
+    <v-row justify="center">
+      <v-dialog v-model="personPackages.dialog" width="400px">
+        <!-- <template v-slot:activator="{ on }">
+          <v-btn color="primary" dark v-on="on">
+            Open Dialog
+          </v-btn>
+        </template> -->
+        <v-card>
+          <v-card-title>
+            <span>{{ personPackages.title }}</span>
+          </v-card-title>
+          <v-card-text>
+            <p v-for="p in personPackages.packages.data" :key="p.id">
+              {{ p.name }} <code>{{ fmtDate(p.created_at) }}</code>
+            </p>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="green darken-1" text @click="personPackages.dialog = false">
+              بستن
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </div>
 </template>
 
@@ -161,13 +191,14 @@ export default {
         users: []
       },
       pathsKeyValue: new Map(),
+      personPackages: { dialog: false, packages: {} }
     }
   },
   mounted () {
     this.items.packages = this.packages.data.map(x => ({ text: x.name, value: x.id }))
     this.items.paths = this.paths.data.map(x => ({ text: x.name, value: x.id }))
     this.items.users = this.users.data.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
-    _.forEach(this.items.paths, (v,k)=>  this.pathsKeyValue.set(k, v));
+    _.forEach(this.items.paths, v => this.pathsKeyValue.set(v.value, v.text))
   },
   methods: {
     fmtDate (v) {
@@ -180,19 +211,25 @@ export default {
         this.people = await this.$axios.$get('/api/people', { params })
       } catch (e) {}
     },
-    async onSubmit () {
+    async onAddPackage () {
       try {
-        await this.$axios.$post('/api/people/package', this.form)
+        if (this.form.ids.length < 1) { return }
+        await this.$axios.$post('/api/people/package', omitEmptyFields(this.form))
         await this.onSearch()
         this.form.selectedAll = false
         this.form.ids = []
-      } catch (e) {}
+        alert('بسته اختصاص بافت')
+      } catch (e) {
+        alert(e.message)
+      }
     },
     onSelectAll () {
       this.form.ids = this.form.selectedAll ? _.map(this.people.data, x => x.id) : []
     },
-    pathIdToText(id) {
-      return
+    async onShowPackages (p) {
+      this.personPackages.dialog = true
+      this.personPackages.title = `${p.first_name} ${p.last_name}`
+      this.personPackages.packages = await this.$axios.$get(`/api/people/${p.id}/packages`)
     }
   }
 }
