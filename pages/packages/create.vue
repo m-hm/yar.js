@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { omitEmptyFields } from '~/lib/helper'
+
 export default {
   data () {
     return {
@@ -45,7 +47,7 @@ export default {
         return
       }
       try {
-        await this.$axios.$post('/api/packages', this.form)
+        await this.$axios.$post('/api/packages', omitEmptyFields(this.form))
         alert('بسته اضافه شد')
       } catch (e) {
       }

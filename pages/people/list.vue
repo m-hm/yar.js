@@ -20,11 +20,11 @@
                 dir="ltr"
               />
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="2">
               <v-select
-                v-model="search.package"
-                :items="items.packages"
-                label="بسته"
+                v-model="search.path_id"
+                :items="items.paths"
+                label="مسیر"
               />
             </v-col>
             <v-col cols="12" md="2">
@@ -59,7 +59,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="p in people" :key="p.id">
+          <tr v-for="p in people.data" :key="p.id">
             <td><v-checkbox v-model="form.ids" :value="p.id" /></td>
             <td>{{ p.first_name }}</td>
             <td>{{ p.last_name }}</td>
@@ -71,7 +71,7 @@
             <td>{{ p.children_count }}</td>
             <td>{{ p.mobiles }}</td>
             <td>{{ p.phones }}</td>
-            <td>{{ dateFormat(p.created_at) }}</td>
+            <td>{{ fmtDate(p.created_at) }}</td>
             <td>{{ p.address }}</td>
             <td>{{ p.description }}</td>
             <td>
@@ -83,6 +83,21 @@
         </tbody>
       </template>
     </v-simple-table>
+
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="8">
+          <v-container class="max-width">
+            <v-pagination
+              v-model="search.page"
+              class="my-4"
+              :length="people.meta.last_page"
+              @input="onSearch"
+            />
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
 
     <div>
       <v-container fluid>
@@ -118,16 +133,19 @@
 </template>
 
 <script>
-const DateFormat = Intl.DateTimeFormat('fa-IR').format
+import _ from 'lodash'
+import { format, omitEmptyFields } from '~/lib/helper'
 
 export default {
   async asyncData ({ $axios }) {
-    const people = (await $axios.$get('/api/people')).data
-    const packages = (await $axios.$get('/api/packages')).data
-    const users = (await $axios.$get('/api/users')).data
+    const packages = (await $axios.$get('/api/packages'))
+    const paths = (await $axios.$get('/api/paths'))
+    const people = (await $axios.$get('/api/people'))
+    const users = (await $axios.$get('/api/users'))
     return {
-      people,
       packages,
+      paths,
+      people,
       users
     }
   },
@@ -137,30 +155,25 @@ export default {
       form: { ids: [], selectedAll: false },
       items: {
         packages: [],
+        paths: [],
         users: []
       }
     }
   },
   mounted () {
-    this.items.packages = this.packages.map(x => ({ text: x.name, value: x.id }))
-    this.items.users = this.users.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
+    this.items.packages = this.packages.data.map(x => ({ text: x.name, value: x.id }))
+    this.items.paths = this.paths.data.map(x => ({ text: x.name, value: x.id }))
+    this.items.users = this.users.data.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
   },
   methods: {
-    dateFormat (date) {
-      return DateFormat(new Date(date))
+    fmtDate (v) {
+      return format.date(v)
     },
-    async onSearch () {
-      const data = {}
-      for (const k in this.search) {
-        const v = this.search[k].trim()
-        this.search[k] = v
-        if (v.length > 0) {
-          data[k] = v
-        }
-      }
+    async onSearch (v) {
       try {
-        const result = await this.$axios.$get('/api/people', { params: data })
-        this.people = result.data
+        const params = omitEmptyFields(this.search)
+        if (_.isInteger(v)) { params.page = v }
+        this.people = await this.$axios.$get('/api/people', { params })
       } catch (e) {}
     },
     async onSubmit () {
@@ -172,7 +185,7 @@ export default {
       } catch (e) {}
     },
     onSelectAll () {
-      this.form.ids = this.form.selectedAll ? this.people.map(x => x.id) : []
+      this.form.ids = this.form.selectedAll ? _.map(this.people.data, x => x.id) : []
     }
   }
 }

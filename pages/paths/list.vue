@@ -10,10 +10,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="p in paths" :key="p.id">
+        <tr v-for="p in paths.data" :key="p.id">
           <td>{{ p.name }}</td>
           <td>{{ p.description }}</td>
-          <td>{{ dateFormat(p.created_at) }}</td>
+          <td>{{ fmtDate(p.created_at) }}</td>
           <td>
             <nuxt-link :to="`/paths/${p.id}/edit`">
               ویرایش
@@ -26,18 +26,18 @@
 </template>
 
 <script>
-const DateFormat = Intl.DateTimeFormat('fa-IR').format
+import { format } from '~/lib/helper'
 
 export default {
   async asyncData ({ $axios }) {
-    const result = await $axios.$get('/api/paths')
+    const paths = await $axios.$get('/api/paths')
     return {
-      paths: result.data
+      paths
     }
   },
   methods: {
-    dateFormat (date) {
-      return DateFormat(new Date(date))
+    fmtDate (v) {
+      return format.date(v)
     }
   }
 }

@@ -3,17 +3,17 @@
     <template v-slot:default>
       <thead>
         <tr>
-          <th>نماد</th>
+          <th>بسته</th>
           <th>توضیحات</th>
           <th>تاریخ ایجاد</th>
           <th>عملیات</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="p in packages" :key="p.id">
+        <tr v-for="p in packages.data" :key="p.id">
           <td>{{ p.name }}</td>
           <td>{{ p.description }}</td>
-          <td>{{ dateFormat(p.created_at) }}</td>
+          <td>{{ fmtDate(p.created_at) }}</td>
           <td>
             <nuxt-link :to="`/packages/${p.id}/edit`">
               ویرایش
@@ -26,18 +26,18 @@
 </template>
 
 <script>
-const DateFormat = Intl.DateTimeFormat('fa-IR').format
+import { format } from '~/lib/helper'
 
 export default {
   async asyncData ({ $axios }) {
-    const result = await $axios.$get('/api/packages')
+    const packages = await $axios.$get('/api/packages')
     return {
-      packages: result.data
+      packages
     }
   },
   methods: {
-    dateFormat (date) {
-      return DateFormat(new Date(date))
+    fmtDate (v) {
+      return format.date(v)
     }
   }
 }

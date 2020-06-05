@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { omitEmptyFields } from '~/lib/helper'
+
 export default {
   async asyncData ({ $axios, params }) {
     const result = await $axios.$get(`/api/packages/${params.id}`)
@@ -49,10 +51,9 @@ export default {
         return
       }
       try {
-        await this.$axios.$put(`/api/packages/${this.form.id}`, this.form)
+        await this.$axios.$put(`/api/packages/${this.form.id}`, omitEmptyFields(this.form))
         alert('بسته ویرایش شد')
-      } catch (e) {
-      }
+      } catch (e) { }
     }
   }
 }

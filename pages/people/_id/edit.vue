@@ -6,11 +6,9 @@
           <v-col cols="12" md="2">
             <v-text-field v-model="form.first_name" :rules="rule.name" label="نام" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.last_name" :rules="rule.name" label="نام‌خانوادگی" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field
               v-model="form.national_code"
@@ -19,15 +17,12 @@
               dir="ltr"
             />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.father_name" label="نام پدر" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.whife_name" label="نام‌ همسر" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field
               v-model="form.wife_national_code"
@@ -48,19 +43,10 @@
           <v-col cols="12" md="2">
             <v-text-field v-model="form.children_count" type="number" label="تعداد فرزندان" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.income" type="number" label="درآمد" />
           </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field
-              v-model="form.mobile"
-              label="موبایل ها"
-              dir="ltr"
-              hint="با / از هم جدا کنید"
-            />
-          </v-col>
-          <v-col cols="12" md="2">
+          <v-col cols="12" md="4">
             <v-text-field
               v-model="form.phones"
               label="تلفن ها"
@@ -73,23 +59,18 @@
           <v-col cols="12" md="2">
             <v-text-field v-model="form.introducer" label="معرف" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.researches" type="number" label="تحقیقات" />
           </v-col>
-
           <v-col cols="12" md="2">
-            <v-text-field v-model="form.suspicious" type="number" label="مشکوک" />
+            <v-text-field v-model="form.verification_session" label="جلسه صحت سنجی" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.pension" label="مستمری" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.job" label="شغل" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.illness" label="بیماری" />
           </v-col>
@@ -99,7 +80,6 @@
           <v-col cols="12" md="2">
             <v-text-field v-model="form.location" label="مکان" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-select
               v-model="form.path_id"
@@ -107,11 +87,9 @@
               label="مسیر"
             />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.housing_status" type="number" label="وضعیت مسکن" />
           </v-col>
-
           <v-col cols="12" md="2">
             <v-text-field v-model="form.physical_status" label="وضعیت جسمی" />
           </v-col>
@@ -121,7 +99,6 @@
           <v-col cols="12" md="6">
             <v-text-field v-model="form.address" label="آدرس" />
           </v-col>
-
           <v-col cols="12" md="6">
             <v-text-field v-model="form.description" label="توضیحات" />
           </v-col>
@@ -140,18 +117,8 @@
 </template>
 
 <script>
-function isNationalCode (v) {
-  if (!/^[0-9]{10}$/.test(v)) { return false }
+import { isNationalCode, omitEmptyFields } from '~/lib/helper'
 
-  let sum = 0
-  for (let i = 0; i < 9; i++) {
-    sum += (v[i] | 0) * (10 - i)
-  }
-
-  let rem = sum % 11
-  if (rem > 1) { rem = 11 - rem }
-  return (v[9] | 0) === rem
-}
 export default {
   async asyncData ({ $axios, params }) {
     const paths = (await $axios.$get('/api/paths')).data
@@ -186,7 +153,7 @@ export default {
         return
       }
       try {
-        await this.$axios.$put(`/api/people/${this.form.id}`, this.form)
+        await this.$axios.$put(`/api/people/${this.form.id}`, omitEmptyFields(this.form))
         alert('شخص ویرایش شد')
       } catch (e) {}
     }
