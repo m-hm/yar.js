@@ -4,7 +4,14 @@
       <sidebar-menu />
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-right color="cyan" dark right>
+    <v-app-bar
+      app
+      clipped-right
+      color="cyan"
+      height="45"
+      dark
+      right
+    >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>مدیریت</v-toolbar-title>
 
@@ -35,10 +42,10 @@
       </v-container>
     </v-content>
 
-    <v-footer>
+    <!-- <v-footer>
       <v-spacer />
       <span>&copy; 2020</span>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
