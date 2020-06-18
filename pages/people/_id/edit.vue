@@ -35,16 +35,34 @@
 
         <v-row>
           <v-col cols="12" md="2">
-            <v-switch v-model="form.is_supervisor" label="سرپرست" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.priority" type="number" label="اولویت" />
-          </v-col>
-          <v-col cols="12" md="2">
             <v-text-field v-model="form.children_count" type="number" label="تعداد فرزندان" />
           </v-col>
           <v-col cols="12" md="2">
+            <v-switch v-model="form.is_supervisor" label="سرپرست" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.housing_status" type="number" label="وضعیت مسکن" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.job" label="شغل" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.pension" label="مستمری" />
+          </v-col>
+          <v-col cols="12" md="2">
             <v-text-field v-model="form.income" type="number" label="درآمد" />
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.illness" label="بیماری" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.physical_status" label="وضعیت جسمی" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.introducer" label="معرف" />
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -53,33 +71,12 @@
               dir="ltr"
             />
           </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.introducer" label="معرف" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.researches" type="number" label="تحقیقات" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.verification_session" label="جلسه صحت سنجی" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.pension" label="مستمری" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.job" label="شغل" />
-          </v-col>
-          <v-col cols="12" md="2">
-            <v-text-field v-model="form.illness" label="بیماری" />
-          </v-col>
-        </v-row>
-
-        <v-row>
           <v-col cols="12" md="2">
             <v-text-field v-model="form.location" label="مکان" />
           </v-col>
+        </v-row>
+
+        <v-row>
           <v-col cols="12" md="2">
             <v-select
               v-model="form.path_id"
@@ -88,10 +85,13 @@
             />
           </v-col>
           <v-col cols="12" md="2">
-            <v-text-field v-model="form.housing_status" type="number" label="وضعیت مسکن" />
+            <v-text-field v-model="form.researches" type="number" label="تحقیقات" />
           </v-col>
           <v-col cols="12" md="2">
-            <v-text-field v-model="form.physical_status" label="وضعیت جسمی" />
+            <v-text-field v-model="form.verification_session" label="جلسه صحت سنجی" />
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field v-model="form.priority" type="number" label="اولویت" />
           </v-col>
         </v-row>
 
@@ -117,6 +117,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { isNationalCode, omitEmptyFields } from '~/lib/helper'
 
 export default {
@@ -145,7 +146,8 @@ export default {
     }
   }),
   mounted () {
-    this.items.paths = this.paths.map(x => ({ text: x.name, value: x.id }))
+    this.items.paths.push({ text: '---', value: '' })
+    _.forEach(this.paths.data, (x) => { this.items.paths.push({ text: x.name, value: x.id }) })
   },
   methods: {
     async submit () {

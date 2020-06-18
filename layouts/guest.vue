@@ -10,7 +10,7 @@
 
     <v-footer color="primary" app>
       <v-spacer />
-      <span class="white--text">&copy; 2020</span>
+      <span class="white--text">&copy; ۱۳۹۹</span>
     </v-footer>
   </v-app>
 </template>
@@ -21,9 +21,3 @@ export default {
   })
 }
 </script>
-
-<style>
-body {
-  font-family: Samim;
-}
-</style>

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <v-pagination v-model="search.page" :length="people.meta.last_page" @input="onSearch" />
+    <div id="pager-top">
+      <v-pagination v-model="search.page" :length="people.meta.last_page" @input="onSearch" />
+    </div>
 
     <v-simple-table dense>
       <template v-slot:default>
@@ -192,7 +194,8 @@ export default {
   },
   mounted () {
     this.items.packages = this.packages.data.map(x => ({ text: x.name, value: x.id }))
-    this.items.paths = this.paths.data.map(x => ({ text: x.name, value: x.id }))
+    this.items.paths.push({ text: '---', value: '' })
+    _.forEach(this.paths.data, (x) => { this.items.paths.push({ text: x.name, value: x.id }) })
     this.items.users = this.users.data.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
   },
   methods: {
@@ -201,8 +204,10 @@ export default {
     },
     async onSearch (v) {
       try {
+        this.search.priority |= 0
+        this.search.path_id |= 0
+        this.search.page = _.isInteger(v) ? v : 1
         const params = omitEmptyFields(this.search)
-        params.page = _.isInteger(v) ? v : 1
         this.people = await this.$axios.$get('/api/people', { params })
       } catch (e) {}
     },
@@ -235,6 +240,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+#pager-top {
+  max-width: 500px;
+  margin: 0 auto;
+}
 </style>
