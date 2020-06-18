@@ -77,7 +77,7 @@
       <v-btn dark @click="sheets.assignPackage = !sheets.assignPackage">
         <v-icon>mdi-text-box-plus-outline</v-icon>
       </v-btn>
-      <v-btn dark @click="sheets.print = !sheets.print">
+      <v-btn dark @click="onPrint">
         <v-icon>mdi-printer</v-icon>
       </v-btn>
     </v-bottom-navigation>
@@ -90,7 +90,7 @@
             <v-col cols="12" md="1">
               <v-text-field v-model="search.priority" type="number" label="اولویت" dense />
             </v-col>
-            <v-col cols="12" md="2">
+            <v-col cols="12" md="1">
               <v-text-field v-model="search.first_name" label="نام" dense />
             </v-col>
             <v-col cols="12" md="2">
@@ -113,6 +113,14 @@
               />
             </v-col>
             <v-col cols="12" md="2">
+              <v-select
+                v-model="search.package_id"
+                :items="items.packages"
+                label="بسته"
+                dense
+              />
+            </v-col>
+            <v-col cols="12" md="1">
               <v-btn color="primary" dense @click="onSearch">
                 جست‌وجو
               </v-btn>
@@ -155,6 +163,13 @@
         </v-container>
       </v-sheet>
     </v-bottom-sheet>
+
+    <table id="table-print">
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -193,10 +208,14 @@ export default {
     }
   },
   mounted () {
-    this.items.packages = this.packages.data.map(x => ({ text: x.name, value: x.id }))
+    this.items.packages.push({ text: '---', value: '' })
+    _.forEach(this.packages.data, (x) => { this.items.packages.push({ text: x.name, value: x.id }) })
+
     this.items.paths.push({ text: '---', value: '' })
     _.forEach(this.paths.data, (x) => { this.items.paths.push({ text: x.name, value: x.id }) })
-    this.items.users = this.users.data.map(x => ({ text: `${x.first_name} ${x.last_name}`, value: x.id }))
+
+    this.items.users.push({ text: '---', value: '' })
+    _.forEach(this.users.data, (x) => { this.items.users.push({ text: `${x.first_name} ${x.last_name}`, value: x.id }) })
   },
   methods: {
     fmtDate (v) {
@@ -206,6 +225,7 @@ export default {
       try {
         this.search.priority |= 0
         this.search.path_id |= 0
+        this.search.package_id |= 0
         this.search.page = _.isInteger(v) ? v : 1
         const params = omitEmptyFields(this.search)
         this.people = await this.$axios.$get('/api/people', { params })
@@ -213,7 +233,10 @@ export default {
     },
     async onAddPackage () {
       try {
-        if (this.form.ids.length < 1) { return }
+        if (this.form.ids.length < 1) {
+          alert('هیچ فردی انتخاب نشده است')
+          return
+        }
         await this.$axios.$post('/api/people/package', omitEmptyFields(this.form))
         await this.onSearch()
         this.form.selectedAll = false
@@ -235,6 +258,35 @@ export default {
         this.personPackages.packages = await this.$axios.$get(`/api/people/${p.id}/packages`)
         this.personPackages.progress = false
       } catch (e) {}
+    },
+    onPrint () {
+      if (this.form.ids.length < 1) {
+        alert('هیچ فردی انتخاب نشده است')
+        return
+      }
+
+      const template = `<!DOCTYPE html><html dir="rtl"><haed><meta charset="utf-8"></head><body>
+      <style>
+        * {font: 12px Tahoma;}
+        table, th, td {border: 1px solid black; border-collapse: collapse; text-align: center; padding: 4px;}
+      </style>
+        <table><thead>
+            <tr><th>نام</th><th>نام خانوادگی</th><th>کدملی</th><th>اولویت</th><th>تلفن</th><th>مسیر</th><th>آدرس</th></tr>
+          </thead>
+          <tbody> @DATA </tbody></table></body></html>`
+
+      const P = x => !x || /^\s*$/.test(x) ? '' : x
+      let tr = ''
+      for (const p of this.people.data) {
+        if (!this.form.ids.includes(p.id)) { continue }
+        const path = this.pathsKeyValue.get(p.path_id)
+        tr += `<tr><td>${P(p.first_name)}</td><td>${P(p.last_name)}</td><td>${P(p.national_code)}</td><td>${P(p.priority)}</td><td>${P(p.phones)}</td><td>${P(path)}</td><td>${P(p.address)}</td></tr>`
+      }
+
+      const win = window.open('')
+      win.document.write(template.replace('@DATA', tr))
+      // win.print()
+      // win.close()
     }
   }
 }
