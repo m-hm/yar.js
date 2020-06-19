@@ -265,31 +265,42 @@ export default {
         return
       }
 
-      const template = `<!DOCTYPE html><html dir="rtl"><haed><meta charset="utf-8"></head><body>
-      <style>
-        * {font: 12px Tahoma;}
-        table, th, td {border: 1px solid black; border-collapse: collapse; text-align: center; padding: 4px;}
-      </style>
-        <table><thead>
-            <tr><th>نام</th><th>نام خانوادگی</th><th>کدملی</th><th>اولویت</th><th>تلفن</th><th>مسیر</th><th>آدرس</th></tr>
-          </thead>
-          <tbody> @DATA </tbody></table></body></html>`
-
       const P = x => !x || /^\s*$/.test(x) ? '' : x
       let tr = ''
+      let i = 1
+
       for (const p of this.people.data) {
         if (!this.form.ids.includes(p.id)) { continue }
-        const path = this.pathsKeyValue.get(p.path_id)
-        tr += `<tr><td>${P(p.first_name)}</td><td>${P(p.last_name)}</td><td>${P(p.national_code)}</td><td>${P(p.priority)}</td><td>${P(p.phones)}</td><td>${P(path)}</td><td>${P(p.address)}</td></tr>`
+        tr += `<tr><td>${i}</td><td>${P(p.first_name)}</td>
+            <td>${P(p.last_name)}</td><td>${P(p.national_code)}</td>
+            <td>${P(p.father_name)}</td><td>${P(p.phones)}</td>
+            <td>${P(this.pathsKeyValue.get(p.path_id))}</td><td>${P(p.address)}</td></tr>`
+        i++
       }
 
       const win = window.open('')
-      win.document.write(template.replace('@DATA', tr))
+      win.document.write(PRINT_TEMPLATE.replace('@DATA', tr))
       // win.print()
       // win.close()
     }
   }
 }
+
+const PRINT_TEMPLATE = `
+<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"></head>
+<body>
+  <style> * { font: 12px Tahoma; }
+    table, th, td { border: 1px solid black; border-collapse: collapse; text-align: center; padding: 4px; }
+  </style>
+  <table><thead><tr>
+        <td>#</td><th>نام</th><th>نام خانوادگی</th>
+        <th>کدملی</th><th>نام پدر</th>
+        <th>تلفن</th><th>مسیر</th>
+        <th>آدرس</th>
+      </tr></thead>
+    <tbody> @DATA </tbody>
+  </table>
+</body></html>`
 </script>
 
 <style scoped>
