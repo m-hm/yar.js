@@ -1,9 +1,5 @@
 <template>
   <div>
-    <div id="pager-top">
-      <v-pagination v-model="search.page" :length="people.meta.last_page" @input="onSearch" />
-    </div>
-
     <v-simple-table dense>
       <template v-slot:default>
         <thead>
@@ -71,8 +67,15 @@
 
     <!-- Operations -->
     <v-bottom-navigation height="35" fixed dark color="gary">
+      <v-btn dark @click="sheets.pagination = !sheets.pagination">
+        <v-icon>mdi-book-open-page-variant</v-icon>
+      </v-btn>
       <v-btn dark @click="sheets.search = !sheets.search">
         <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      </v-btn>
+      <v-btn dark @click="sheets.changePriority = !sheets.changePriority">
+        <v-icon>mdi-state-machine</v-icon>
       </v-btn>
       <v-btn dark @click="sheets.assignPackage = !sheets.assignPackage">
         <v-icon>mdi-text-box-plus-outline</v-icon>
@@ -81,6 +84,35 @@
         <v-icon>mdi-printer</v-icon>
       </v-btn>
     </v-bottom-navigation>
+
+    <!-- Pagger -->
+    <v-bottom-sheet v-model="sheets.pagination">
+      <v-sheet>
+        <div id="pagination-sheet">
+          <v-container>
+            <v-pagination v-model="search.page" :length="people.meta.last_page" @input="onSearch" />
+          </v-container>
+        </div>
+      </v-sheet>
+    </v-bottom-sheet>
+
+    <!-- Change priority -->
+    <v-bottom-sheet v-model="sheets.changePriority">
+      <v-sheet>
+        <v-container>
+          <v-row align="center">
+            <v-col cols="12" sm="2">
+              <v-text-field v-model="priorityForm.priority" type="number" label="تغییر اولویت به" dense />
+            </v-col>
+            <v-col cols="12" sm="2">
+              <v-btn color="primary" dense @click="onChangePriority">
+                اعمال
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-sheet>
+    </v-bottom-sheet>
 
     <!-- Search -->
     <v-bottom-sheet v-model="sheets.search">
@@ -163,13 +195,6 @@
         </v-container>
       </v-sheet>
     </v-bottom-sheet>
-
-    <table id="table-print">
-      <tr>
-        <td>1</td>
-        <td>2</td>
-      </tr>
-    </table>
   </div>
 </template>
 
@@ -196,9 +221,10 @@ export default {
   },
   data () {
     return {
-      sheets: { search: false, assignPackage: false, print: false },
+      sheets: { pagination: false, search: false, changePriority: false, assignPackage: false, print: false },
       search: { },
       form: { ids: [], selectedAll: false },
+      priorityForm: {},
       items: {
         packages: [],
         paths: [],
@@ -241,7 +267,23 @@ export default {
         await this.onSearch()
         this.form.selectedAll = false
         this.form.ids = []
-        alert('بسته اختصاص بافت')
+        alert('بسته اختصاص یافت')
+      } catch (e) {
+        alert(e.message)
+      }
+    },
+    async onChangePriority () {
+      try {
+        if (this.form.ids.length < 1) {
+          alert('هیچ فردی انتخاب نشده است')
+          return
+        }
+        this.priorityForm.ids = this.form.ids
+        await this.$axios.$post('/api/people/change-priority', omitEmptyFields(this.priorityForm))
+        await this.onSearch()
+        this.form.selectedAll = false
+        this.form.ids = []
+        alert('اولویت تغییر کرد')
       } catch (e) {
         alert(e.message)
       }
@@ -304,7 +346,7 @@ const PRINT_TEMPLATE = `
 </script>
 
 <style scoped>
-#pager-top {
+#pagination-sheet {
   max-width: 500px;
   margin: 0 auto;
 }
