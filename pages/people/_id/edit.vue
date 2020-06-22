@@ -122,7 +122,7 @@ import { isNationalCode, omitEmptyFields } from '~/lib/helper'
 
 export default {
   async asyncData ({ $axios, params }) {
-    const paths = (await $axios.$get('/api/paths')).data
+    const paths = await $axios.$get('/api/paths')
     const result = await $axios.$get(`/api/people/${params.id}`)
     return {
       paths,
